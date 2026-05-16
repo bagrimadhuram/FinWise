@@ -49,22 +49,16 @@ export default function ChatAssistant({ onClose }: { onClose: () => void }) {
         createdAt: serverTimestamp()
       });
 
-      // 2. Call AI API
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: userMessage,
-          history: messages.slice(-5), // Send last few messages for context
-          profile
-        })
-      });
-      const data = await response.json();
+      // 2. Mock AI response locally
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const mockResponse = {
+        content: `I've analyzed your question about "${userMessage}". Based on your monthly income of ₹${profile?.monthlyIncome.toLocaleString()}, my advice would be to maintain a balanced budget while prioritizing your goals. Keep up the great work!`
+      };
 
       // 3. Save AI response to Firestore
       await addDoc(collection(db, `users/${user.uid}/chat`), {
         role: 'model',
-        content: data.content,
+        content: mockResponse.content,
         userId: user.uid,
         createdAt: serverTimestamp()
       });

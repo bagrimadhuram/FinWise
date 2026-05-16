@@ -25,19 +25,32 @@ export default function AffordabilityModal({ onClose, goals }: { onClose: () => 
     if (!item || !price) return;
     setLoading(true);
     try {
-      const response = await fetch('/api/ai/affordability', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          item,
-          price: parseInt(price),
-          whenToBuy,
-          profile,
-          goals
-        })
+      // Mocking AI affordability check
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      const p = parseInt(price);
+      const disposable = (profile?.monthlyIncome || 0) - (profile?.fixedExpenses || 0);
+      
+      let verdict: 'green' | 'amber' | 'red' = 'green';
+      let title = "Go for it!";
+      let description = `You have ₹${disposable.toLocaleString()} disposable income which easily covers this ₹${p.toLocaleString()} purchase without delaying milestones.`;
+      
+      if (p > disposable * 2) {
+        verdict = 'red';
+        title = "Probably not right now";
+        description = `This ₹${p.toLocaleString()} purchase is more than 2 months of your disposable income. It will significantly strain your emergency fund.`;
+      } else if (p > disposable) {
+        verdict = 'amber';
+        title = "Proceed with caution";
+        description = `You can afford this, but it will consume your entire monthly surplus. Consider if there's a cheaper version.`;
+      }
+
+      setResult({
+        verdict,
+        title,
+        description,
+        impact: verdict === 'green' ? "Zero delay to your active goals." : `May delay your ${goals[0]?.name || 'next milestone'} by 3-4 weeks.`,
+        alternatives: p > 20000 ? ["Wait for a seasonal sale", "Consider a refurbished model", "Save for 2 more months first"] : ["Check for coupon codes", "Compare with competitors"]
       });
-      const data = await response.json();
-      setResult(data);
     } catch (error) {
       console.error("Affordability check failed:", error);
     } finally {

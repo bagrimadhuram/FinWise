@@ -81,24 +81,20 @@ export default function Onboarding() {
 
       await Promise.all(goalPromises);
 
-      // Call AI to generate initial goals or roadmap
-      let roadmapData = null;
-      try {
-        const aiResponse = await fetch('/api/ai/onboarding', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile })
-        });
-        if (aiResponse.ok) {
-          roadmapData = await aiResponse.json();
-        }
-      } catch (e) {
-        console.error("AI Roadmap Generation Error:", e);
-      }
+      // Generate local mock roadmap data instead of calling API
+      const mockRoadmapData = {
+        summary: `Excellent start, ${profile.name}! Based on your monthly income of ₹${profile.monthlyIncome.toLocaleString()}, you have a solid foundation. Your goals for ${formData.goals.length} milestones are ambitious but achievable with disciplined planning.`,
+        suggestions: [
+          "Automate your savings: Set up a recurring transfer on your salary date.",
+          "Review your variable spending: A 10% reduction in shopping could accelerate your goals by 2 months.",
+          "Target high-priority milestones first: Your emergency fund should be the top priority."
+        ],
+        monthlySavingsTarget: Math.round(profile.monthlyIncome * 0.3)
+      };
 
       const finalProfile: UserProfile = {
         ...profile,
-        roadmap: roadmapData || undefined
+        roadmap: mockRoadmapData
       };
 
       await setDoc(doc(db, 'users', user.uid), finalProfile);

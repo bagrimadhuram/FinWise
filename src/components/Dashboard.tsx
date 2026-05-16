@@ -68,13 +68,18 @@ export default function Dashboard() {
     const fetchInsights = async () => {
       setLoadingInsights(true);
       try {
-        const response = await fetch('/api/ai/insights', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile, goals, expenses: expenses.slice(-10) }) // Send last 10 expenses for context
-        });
-        const data = await response.json();
-        setAiInsights(data);
+        // Mocking AI insights locally
+        await new Promise(resolve => setTimeout(resolve, 800));
+        const mockInsights = {
+          score: 85,
+          statusMessage: "Your financial momentum is building!",
+          insights: [
+            `Hey ${profile.name || 'there'}! You're currently saving ₹${savingsAmount.toLocaleString()} this month.`,
+            "You've covered 85% of your fixed expenses. Great discipline!",
+            "Consider small cuts in variable spending to reach your car goal faster."
+          ]
+        };
+        setAiInsights(mockInsights);
       } catch (error) {
         console.error("Failed to fetch AI insights:", error);
       } finally {
