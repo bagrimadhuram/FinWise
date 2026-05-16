@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LandingPage from './components/LandingPage';
 import Onboarding from './components/Onboarding';
 import Dashboard from './components/Dashboard';
+import AuthScreen from './components/AuthScreen';
 
 function AppContent() {
   const { user, profile, loading } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
 
   if (loading) {
     return (
@@ -15,7 +18,10 @@ function AppContent() {
   }
 
   if (!user) {
-    return <LandingPage />;
+    if (showAuth) {
+      return <AuthScreen onBack={() => setShowAuth(false)} />;
+    }
+    return <LandingPage onAuthStart={() => setShowAuth(true)} />;
   }
 
   if (user && (!profile || !profile.onboardingComplete)) {

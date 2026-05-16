@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -31,22 +31,30 @@ app.post("/api/ai/onboarding", async (req, res) => {
       
       Provide a JSON response with:
       1. A short, encouraging summary of their financial health.
-      2. Suggested monthly savings targets for their goals.
+      2. Suggested monthly savings target to hit their goals.
       3. Any immediate 'low-hanging fruit' suggestions to save money.
-      
-      Response format:
-      {
-        "summary": "...",
-        "suggestions": ["...", "..."],
-        "roadmap": { "monthlySavingsTarget": 0, "estimatedTimeToGoals": {} }
-      }
     `;
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            summary: { type: Type.STRING },
+            suggestions: { 
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            monthlySavingsTarget: { type: Type.NUMBER }
+          },
+          required: ["summary", "suggestions", "monthlySavingsTarget"]
+        }
+      }
     });
-    const text = (response.text || "").replace(/```json|```/g, "").trim();
-    res.json(JSON.parse(text));
+
+    res.json(JSON.parse(response.text || "{}"));
   } catch (error) {
     console.error("AI Onboarding Error:", error);
     res.status(500).json({ error: "Failed to process roadmap" });
@@ -62,28 +70,29 @@ app.post("/api/ai/affordability", async (req, res) => {
       Active Goals: ${JSON.stringify(goals)}
       
       Analyze if they can afford it. Consider their monthly disposable income, goal priority, and emergency fund status.
-      Provide a JSON response with:
-      1. Verdict: "green" (yes), "amber" (with trade-offs), "red" (caution)
-      2. Title: A catchy verdict headline.
-      3. Description: The reason for the verdict, specifically mentioning the timing they requested.
-      4. Impact: How it affects their goals (e.g., "delays Europe trip by 2 weeks").
-      5. Alternatives: Cheaper options or a better time to buy (e.g. "Wait 2 more months to save enough surplus").
-      
-      Response format:
-      {
-        "verdict": "green|amber|red",
-        "title": "Verict headline",
-        "description": "...",
-        "impact": "...",
-        "alternatives": ["...", "..."]
-      }
     `;
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            verdict: { type: Type.STRING, enum: ["green", "amber", "red"] },
+            title: { type: Type.STRING },
+            description: { type: Type.STRING },
+            impact: { type: Type.STRING },
+            alternatives: { 
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ["verdict", "title", "description", "impact", "alternatives"]
+        }
+      }
     });
-    const text = (response.text || "").replace(/```json|```/g, "").trim();
-    res.json(JSON.parse(text));
+    res.json(JSON.parse(response.text || "{}"));
   } catch (error) {
     console.error("AI Affordability Error:", error);
     res.status(500).json({ error: "Failed to analyze affordability" });
@@ -94,8 +103,7 @@ app.post("/api/ai/chat", async (req, res) => {
   try {
     const { message, history, profile } = req.body;
     
-    // We can simulate chat by appending context to the history
-    const systemInstruction = `You are FinWise, a supportive financial copilot. Context: User profile is ${JSON.stringify(profile)}. `;
+    const systemInstruction = `You are FinWise, a supportive financial copilot. Context: User profile is ${JSON.stringify(profile)}. Keep responses helpful and professional.`;
     
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -128,28 +136,27 @@ app.post("/api/ai/insights", async (req, res) => {
       Recent Expenses: ${JSON.stringify(expenses)}
       
       Note: The user has multiple goals. Provide insights that look at the BIG PICTURE of their savings portfolio.
-      
-      Provide a JSON response with:
-      1. Health Score: A number from 0-100 reflecting their overall financial discipline and progress towards goals.
-      2. Status Message: A short, encouraging summary of their overall status.
-      3. Key Insights: 2-3 specific, actionable points. Mention their "Total Portfolio" if they have more than one goal.
-      
-      Response format:
-      {
-        "score": 82,
-        "statusMessage": "Your financial health is looking strong!",
-        "insights": [
-          "Hey Rohan! You're ₹3,200 away from being on track for your Europe trip this month.",
-          "You've spent 78% of your dining budget. Consider cooking at home twice this week to hit that target early!"
-        ]
-      }
     `;
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            score: { type: Type.NUMBER },
+            statusMessage: { type: Type.STRING },
+            insights: { 
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            }
+          },
+          required: ["score", "statusMessage", "insights"]
+        }
+      }
     });
-    const text = (response.text || "").replace(/```json|```/g, "").trim();
-    res.json(JSON.parse(text));
+    res.json(JSON.parse(response.text || "{}"));
   } catch (error) {
     console.error("AI Insights Error:", error);
     res.status(500).json({ error: "Failed to fetch insights" });

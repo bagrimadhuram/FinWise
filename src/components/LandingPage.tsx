@@ -1,8 +1,11 @@
 import { motion } from 'motion/react';
 import { Target, Wallet, Tag, ArrowRight } from 'lucide-react';
-import { signInWithGoogle } from '../lib/firebase';
 
-export default function LandingPage() {
+interface LandingPageProps {
+  onAuthStart: () => void;
+}
+
+export default function LandingPage({ onAuthStart }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] overflow-hidden text-slate-200">
       {/* Navigation */}
@@ -14,7 +17,7 @@ export default function LandingPage() {
           <span className="text-2xl font-display font-bold text-white tracking-tight">FinWise</span>
         </div>
         <button 
-          onClick={() => signInWithGoogle()}
+          onClick={onAuthStart}
           className="px-6 py-2 bg-white/5 text-white border border-white/10 rounded-full font-medium shadow-sm hover:bg-white/10 transition-all active:scale-95"
         >
           Sign In
@@ -36,7 +39,7 @@ export default function LandingPage() {
             AI-powered financial planning built for salaried professionals. Build structured roadmaps toward your goals with a smart friend who knows money.
           </p>
           <button 
-            onClick={() => signInWithGoogle()}
+            onClick={onAuthStart}
             className="px-8 py-4 bg-teal-500 text-black rounded-full text-lg font-bold shadow-xl shadow-teal-500/20 hover:bg-teal-400 transition-all flex items-center gap-2 mx-auto active:scale-95 group"
           >
             Start My Financial Plan — It's Free

@@ -53,8 +53,6 @@ export default function Onboarding() {
         updatedAt: new Date().toISOString()
       };
 
-      await setDoc(doc(db, 'users', user.uid), profile);
-
       // Save initial goals to Firestore
       const goalPromises = formData.goals.map(goalId => {
         const goalInfo = [
@@ -83,12 +81,27 @@ export default function Onboarding() {
 
       await Promise.all(goalPromises);
 
-      // Call AI to generate initial goals or roadmap if needed
-      await fetch('/api/ai/onboarding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile })
-      });
+      // Call AI to generate initial goals or roadmap
+      let roadmapData = null;
+      try {
+        const aiResponse = await fetch('/api/ai/onboarding', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ profile })
+        });
+        if (aiResponse.ok) {
+          roadmapData = await aiResponse.json();
+        }
+      } catch (e) {
+        console.error("AI Roadmap Generation Error:", e);
+      }
+
+      const finalProfile: UserProfile = {
+        ...profile,
+        roadmap: roadmapData || undefined
+      };
+
+      await setDoc(doc(db, 'users', user.uid), finalProfile);
 
       await refreshProfile();
     } catch (error) {

@@ -23,6 +23,11 @@ export interface UserProfile {
   variableSpendHabits: VariableSpendHabits;
   totalSavings: number;
   onboardingComplete: boolean;
+  roadmap?: {
+    summary: string;
+    suggestions: string[];
+    monthlySavingsTarget: number;
+  };
   createdAt: string;
   updatedAt: string;
 }

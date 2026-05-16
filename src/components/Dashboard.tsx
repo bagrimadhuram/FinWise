@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { collection, query, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
-import { db, auth } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { Goal, Expense } from '../types';
 import { formatCurrency, cn } from '../lib/utils';
 import AffordabilityModal from './AffordabilityModal';
@@ -33,7 +33,7 @@ import GoalDetailModal from './GoalDetailModal';
 import GoalTimeline from './GoalTimeline';
 
 export default function Dashboard() {
-  const { user, profile } = useAuth();
+  const { user, profile, logout } = useAuth();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [activeModal, setActiveModal] = useState<'affordability' | 'chat' | 'expense' | 'goal' | 'roadmap' | null>(null);
@@ -147,7 +147,7 @@ export default function Dashboard() {
             <p className="text-xs text-white">Unlimited goals & priority AI insights active.</p>
           </div>
           <button 
-            onClick={() => auth.signOut()}
+            onClick={() => logout()}
             className="w-full flex items-center gap-3 p-3 text-slate-400 hover:text-rose-400 transition-colors"
           >
             <LogOut className="w-5 h-5" /> Sign Out
@@ -233,9 +233,9 @@ export default function Dashboard() {
                 </button>
               </div>
               <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                {goals.length > 0 ? goals.map(goal => (
+                {goals.length > 0 ? goals.map((goal, idx) => (
                   <GoalCard 
-                    key={goal.id} 
+                    key={`${goal.id}-${idx}`} 
                     goal={goal} 
                     onEdit={() => setEditingGoal(goal)} 
                     onClick={() => setSelectedGoal(goal)}
@@ -356,19 +356,19 @@ export default function Dashboard() {
 
       <AnimatePresence>
         {activeModal === 'affordability' && (
-          <AffordabilityModal onClose={() => setActiveModal(null)} goals={goals} />
+          <AffordabilityModal key="affordability-modal" onClose={() => setActiveModal(null)} goals={goals} />
         )}
         {activeModal === 'chat' && (
-          <ChatAssistant onClose={() => setActiveModal(null)} />
+          <ChatAssistant key="chat-modal" onClose={() => setActiveModal(null)} />
         )}
         {activeModal === 'expense' && (
-          <ExpenseTracker onClose={() => setActiveModal(null)} />
+          <ExpenseTracker key="expense-modal" onClose={() => setActiveModal(null)} />
         )}
         {activeModal === 'goal' && (
-          <GoalModal onClose={() => setActiveModal(null)} />
+          <GoalModal key="goal-modal" onClose={() => setActiveModal(null)} />
         )}
         {activeModal === 'roadmap' && (
-          <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-6 sm:p-12">
+          <div key="roadmap-modal" className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-6 sm:p-12">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -439,11 +439,32 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="p-8 bg-teal-500/5 rounded-[32px] border border-teal-500/10 space-y-4">
-                    <h4 className="text-sm font-bold text-teal-400 uppercase tracking-widest">Portfolio Analytics</h4>
-                    <p className="text-sm text-slate-300 leading-relaxed italic">
-                      "At your current aggregate savings rate of {formatCurrency(savingsAmount)}/month, you will hit all your milestones 3 months ahead of schedule."
-                    </p>
+                  <div className="p-8 bg-teal-500/5 rounded-[32px] border border-teal-500/10 space-y-6">
+                    <div>
+                      <h4 className="text-sm font-bold text-teal-400 uppercase tracking-widest mb-4">FinWise Strategy</h4>
+                      <p className="text-sm text-slate-300 leading-relaxed italic">
+                        "{profile?.roadmap?.summary || `At your current aggregate savings rate of ${formatCurrency(savingsAmount)}/month, you are building solid momentum towards your financial milestones.`}"
+                      </p>
+                    </div>
+
+                    {profile?.roadmap?.suggestions && (
+                      <div className="space-y-3">
+                        <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Actionable Steps</p>
+                        <ul className="space-y-2">
+                          {profile.roadmap.suggestions.map((suggestion, i) => (
+                            <li key={i} className="text-xs text-slate-400 flex gap-2">
+                              <span className="text-teal-500 font-bold">•</span>
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                      <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Recommended Target</p>
+                      <p className="text-xl font-bold text-white">{formatCurrency(profile?.roadmap?.monthlySavingsTarget || totalMonthlyRequired)} <span className="text-xs text-slate-500 font-normal">/ month</span></p>
+                    </div>
                   </div>
                 </div>
 
@@ -453,7 +474,25 @@ export default function Dashboard() {
                     <span className="h-px flex-1 bg-white/5" />
                   </h3>
                   <div className="max-w-2xl">
-                    <GoalTimeline goals={goals} onGoalClick={(goal) => setSelectedGoal(goal)} />
+                    {goals.length > 0 ? (
+                      <GoalTimeline goals={goals} onGoalClick={(goal) => setSelectedGoal(goal)} />
+                    ) : (
+                      <div className="p-10 border-2 border-dashed border-white/5 rounded-[32px] flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-slate-600">
+                          <Target className="w-8 h-8" />
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">No active milestones</p>
+                          <p className="text-sm text-slate-500">Add segments to your roadmap to start tracking your progress.</p>
+                        </div>
+                        <button 
+                          onClick={() => { setActiveModal(null); setTimeout(() => setActiveModal('goal'), 300); }}
+                          className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white text-sm font-bold rounded-xl transition-all"
+                        >
+                          Add Your First Goal
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -476,10 +515,10 @@ export default function Dashboard() {
           </div>
         )}
         {selectedGoal && (
-          <GoalDetailModal goal={selectedGoal} onClose={() => setSelectedGoal(null)} />
+          <GoalDetailModal key={`detail-${selectedGoal.id}`} goal={selectedGoal} onClose={() => setSelectedGoal(null)} />
         )}
         {editingGoal && (
-          <EditGoalModal goal={editingGoal} onClose={() => setEditingGoal(null)} />
+          <EditGoalModal key={`edit-${editingGoal.id}`} goal={editingGoal} onClose={() => setEditingGoal(null)} />
         )}
       </AnimatePresence>
     </div>

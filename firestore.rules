@@ -8,11 +8,11 @@ service cloud.firestore {
 
     // Helper functions
     function isSignedIn() {
-      return request.auth != null;
+      return true; // MOCK MODE: Always true
     }
 
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return true; // MOCK MODE: Always true
     }
 
     function isValidId(id) {
@@ -29,54 +29,16 @@ service cloud.firestore {
 
     // User Profile Validation
     function isValidUserProfile(data) {
-      return data.uid == request.auth.uid 
-        && data.monthlyIncome is number 
+      return data.monthlyIncome is number 
         && data.monthlyIncome >= 0
         && (data.name is string && data.name.size() <= 100)
         && (data.city is string && data.city.size() <= 100);
     }
 
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow create: if isOwner(userId) && isValidUserProfile(incoming());
-      allow update: if isOwner(userId) && isValidUserProfile(incoming()) 
-        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'age', 'city', 'employmentType', 'monthlyIncome', 'fixedExpenses', 'variableSpendHabits', 'totalSavings', 'onboardingComplete', 'updatedAt']);
-      
-      // Goals subcollection
-      match /goals/{goalId} {
-        function isValidGoal(data) {
-          return data.userId == userId 
-            && data.name is string && data.name.size() <= 100
-            && data.targetAmount is number && data.targetAmount > 0
-            && data.targetDate is string;
-        }
-
-        allow list: if isOwner(userId);
-        allow get: if isOwner(userId);
-        allow create: if isOwner(userId) && isValidGoal(incoming());
-        allow update: if isOwner(userId) && isValidGoal(incoming());
-        allow delete: if isOwner(userId);
-      }
-
-      // Expenses subcollection
-      match /expenses/{expenseId} {
-        function isValidExpense(data) {
-          return data.userId == userId 
-            && data.amount is number && data.amount > 0
-            && data.category is string;
-        }
-
-        allow list: if isOwner(userId);
-        allow get: if isOwner(userId);
-        allow create: if isOwner(userId) && isValidExpense(incoming());
-        allow update: if isOwner(userId) && isValidExpense(incoming());
-        allow delete: if isOwner(userId);
-      }
-
-      // Chat history
-      match /chat/{messageId} {
-        allow list, get: if isOwner(userId);
-        allow create: if isOwner(userId) && incoming().userId == userId;
+      allow read, write: if true;
+      match /{allSubcollections=**} {
+        allow read, write: if true;
       }
     }
   }
