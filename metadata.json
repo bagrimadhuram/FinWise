@@ -1,0 +1,8 @@
+{
+  "name": "FinWise",
+  "description": "Your Personal Financial Co-Pilot - AI-powered financial planning, goal tracking, and real-time affordability analysis for salaried professionals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

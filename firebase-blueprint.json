@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "User Profile",
+      "description": "Stores user's financial profile, income, and spending habits.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string" },
+        "age": { "type": "number" },
+        "city": { "type": "string" },
+        "employmentType": { "type": "string", "enum": ["Salaried", "Self-employed"] },
+        "monthlyIncome": { "type": "number", "description": "Post-tax take-home salary" },
+        "fixedExpenses": { "type": "number", "description": "Rent, EMIs, Insurance, etc." },
+        "variableSpendHabits": {
+          "type": "object",
+          "properties": {
+            "food": { "type": "number" },
+            "shopping": { "type": "number" },
+            "entertainment": { "type": "number" },
+            "transport": { "type": "number" },
+            "health": { "type": "number" },
+            "travel": { "type": "number" }
+          }
+        },
+        "totalSavings": { "type": "number" },
+        "onboardingComplete": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "monthlyIncome"]
+    },
+    "goal": {
+      "title": "Financial Goal",
+      "description": "A specific financial target for the user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "targetAmount": { "type": "number" },
+        "targetDate": { "type": "string", "format": "date-time" },
+        "currentSaved": { "type": "number" },
+        "status": { "type": "string", "enum": ["On Track", "At Risk", "Achieved"] },
+        "icon": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "targetAmount", "targetDate"]
+    },
+    "expense": {
+      "title": "Expense Entry",
+      "description": "A single expense log entry.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "category": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "note": { "type": "string" },
+        "isRecurring": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "category", "date"]
+    },
+    "chatMessage": {
+      "title": "Chat Message",
+      "description": "Conversation history with FinWise AI.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "model"] },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "role", "content"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "userProfile",
+      "description": "User profile data."
+    },
+    "users/{userId}/goals/{goalId}": {
+      "schema": "goal",
+      "description": "User's financial goals."
+    },
+    "users/{userId}/expenses/{expenseId}": {
+      "schema": "expense",
+      "description": "User's recorded expenses."
+    },
+    "users/{userId}/chat/{messageId}": {
+      "schema": "chatMessage",
+      "description": "AI assistant chat history."
+    }
+  }
+}
