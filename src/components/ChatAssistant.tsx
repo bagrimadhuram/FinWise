@@ -84,7 +84,7 @@ export default function ChatAssistant({ onClose }: { onClose: () => void }) {
               <Sparkles className="w-5 h-5 text-teal-400 fill-teal-400" />
             </div>
             <div>
-              <h2 className="font-bold text-white tracking-tight">Ask FinWise</h2>
+              <h2 className="font-bold text-white tracking-tight">Ask Savio</h2>
               <p className="text-[10px] font-bold text-teal-400/70 tracking-widest uppercase">AI Copilot</p>
             </div>
           </div>

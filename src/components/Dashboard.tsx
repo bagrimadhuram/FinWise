@@ -116,8 +116,8 @@ export default function Dashboard() {
       {/* Sidebar */}
       <aside className="w-64 sidebar-bg flex flex-col p-6">
         <div className="flex items-center gap-3 mb-10">
-          <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center font-bold text-black text-xl">F</div>
-          <h1 className="text-xl font-bold tracking-tight text-white">FinWise</h1>
+          <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center font-bold text-black text-xl">S</div>
+          <h1 className="text-xl font-bold tracking-tight text-white">Savio</h1>
         </div>
         
         <nav className="flex-1 space-y-2">
@@ -170,7 +170,7 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-4 items-center">
             <div className="text-right">
-              <p className="text-xs text-slate-400 uppercase tracking-wider">FinWise Score</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Savio Score</p>
               <div className="flex items-center gap-2 font-bold text-2xl text-teal-400">
                 {healthScore} <span className="text-xs bg-teal-400/20 px-1 rounded font-medium text-teal-400">+3.2%</span>
               </div>
@@ -447,7 +447,7 @@ export default function Dashboard() {
 
                   <div className="p-8 bg-teal-500/5 rounded-[32px] border border-teal-500/10 space-y-6">
                     <div>
-                      <h4 className="text-sm font-bold text-teal-400 uppercase tracking-widest mb-4">FinWise Strategy</h4>
+                      <h4 className="text-sm font-bold text-teal-400 uppercase tracking-widest mb-4">Savio Strategy</h4>
                       <p className="text-sm text-slate-300 leading-relaxed italic">
                         "{profile?.roadmap?.summary || `At your current aggregate savings rate of ${formatCurrency(savingsAmount)}/month, you are building solid momentum towards your financial milestones.`}"
                       </p>

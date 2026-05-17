@@ -81,7 +81,7 @@ export default function AffordabilityModal({ onClose, goals }: { onClose: () => 
         <div className="p-8 bg-[#0a0a0a]">
           {!result ? (
             <div className="space-y-6">
-              <p className="text-slate-400">FinWise AI will analyze your disposable income, goals, and emergency fund to give you an honest verdict.</p>
+              <p className="text-slate-400">Savio AI will analyze your disposable income, goals, and emergency fund to give you an honest verdict.</p>
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">What's the purchase?</label>

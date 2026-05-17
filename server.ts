@@ -26,7 +26,7 @@ app.post("/api/ai/onboarding", async (req, res) => {
   try {
     const { profile } = req.body;
     const prompt = `
-      You are FinWise, a supportive financial copilot. Analyze this user profile and generate an initial financial roadmap.
+      You are Savio, a supportive financial copilot. Analyze this user profile and generate an initial financial roadmap.
       User Profile: ${JSON.stringify(profile)}
       
       Provide a JSON response with:
@@ -65,7 +65,7 @@ app.post("/api/ai/affordability", async (req, res) => {
   try {
     const { item, price, whenToBuy, profile, goals } = req.body;
     const prompt = `
-      You are FinWise. A user wants to buy "${item}" for ${price} and plans to buy it "${whenToBuy}".
+      You are Savio. A user wants to buy "${item}" for ${price} and plans to buy it "${whenToBuy}".
       User Profile: ${JSON.stringify(profile)}
       Active Goals: ${JSON.stringify(goals)}
       
@@ -103,7 +103,7 @@ app.post("/api/ai/chat", async (req, res) => {
   try {
     const { message, history, profile } = req.body;
     
-    const systemInstruction = `You are FinWise, a supportive financial copilot. Context: User profile is ${JSON.stringify(profile)}. Keep responses helpful and professional.`;
+    const systemInstruction = `You are Savio, a supportive financial copilot. Context: User profile is ${JSON.stringify(profile)}. Keep responses helpful and professional.`;
     
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -130,7 +130,7 @@ app.post("/api/ai/insights", async (req, res) => {
   try {
     const { profile, goals, expenses } = req.body;
     const prompt = `
-      You are FinWise. Analyze this user's financial situation:
+      You are Savio. Analyze this user's financial situation:
       Profile: ${JSON.stringify(profile)}
       Goals: ${JSON.stringify(goals)}
       Recent Expenses: ${JSON.stringify(expenses)}

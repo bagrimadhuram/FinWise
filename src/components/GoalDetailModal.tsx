@@ -126,7 +126,7 @@ export default function GoalDetailModal({ goal, onClose }: GoalDetailModalProps)
           <div className="mt-10 p-6 bg-white/5 rounded-3xl border border-white/5 flex items-start gap-4">
             <Info className="w-5 h-5 text-teal-400 shrink-0 mt-1" />
             <div className="space-y-2">
-              <p className="text-sm font-medium text-white">FinWise Strategy Tip</p>
+              <p className="text-sm font-medium text-white">Savio Strategy Tip</p>
               <p className="text-xs text-slate-400 leading-relaxed">
                 To reach this goal faster, consider increasing your monthly contribution by 10%. 
                 Based on your current spending patterns, we suggest reducing "Entertainment" expenses next month.

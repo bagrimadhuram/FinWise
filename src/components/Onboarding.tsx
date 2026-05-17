@@ -122,8 +122,8 @@ export default function Onboarding() {
         <div className="md:w-64 bg-[#0d0d0d] border-r border-white/5 p-10 text-white flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-12">
-              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center font-bold text-black text-xl">F</div>
-              <span className="font-display font-bold text-xl uppercase tracking-tighter">FinWise</span>
+              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center font-bold text-black text-xl">S</div>
+              <span className="font-display font-bold text-xl uppercase tracking-tighter">Savio</span>
             </div>
             <div className="space-y-6">
               {steps.map((s, i) => (

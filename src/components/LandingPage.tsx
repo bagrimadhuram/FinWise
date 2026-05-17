@@ -12,9 +12,9 @@ export default function LandingPage({ onAuthStart }: LandingPageProps) {
       <nav className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center relative z-10">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 card-gradient rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20">
-            <span className="text-black font-bold text-xl">F</span>
+            <span className="text-black font-bold text-xl">S</span>
           </div>
-          <span className="text-2xl font-display font-bold text-white tracking-tight">FinWise</span>
+          <span className="text-2xl font-display font-bold text-white tracking-tight">Savio</span>
         </div>
         <button 
           onClick={onAuthStart}

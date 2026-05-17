@@ -64,7 +64,7 @@
     },
     "chatMessage": {
       "title": "Chat Message",
-      "description": "Conversation history with FinWise AI.",
+      "description": "Conversation history with Savio AI.",
       "type": "object",
       "properties": {
         "userId": { "type": "string" },
