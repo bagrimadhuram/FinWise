@@ -90,7 +90,8 @@ export default function Dashboard() {
     fetchInsights();
   }, [profile, goals.length, expenses.length]);
 
-  const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+  const totalIndividualExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+  const totalExpenses = (profile?.fixedExpenses || 0) + totalIndividualExpenses;
   const healthScore = aiInsights?.score || 82; 
   const savingsAmount = (profile?.monthlyIncome || 0) - totalExpenses;
   const savingsRate = profile?.monthlyIncome ? Math.round((savingsAmount / profile.monthlyIncome) * 100) : 0;
